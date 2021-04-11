@@ -1,0 +1,47 @@
+version: '3.5'
+
+services:
+
+  db:
+    image: postgres
+    container_name: postgres-tmp
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    command:
+      [ "postgres", "-c", "wal_level=logical" ]
+    volumes:
+      - "vol_postgres:/var/lib/postgresql/data"
+    networks:
+      - hib_cache
+
+  hibernate-caching-app:
+    image: sergei/contexts:hibernate-caching-app-latest
+    container_name: hibernate-caching-app
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "1010:1010"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JAVA_OPTS: '-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1010 -Xms64m -Xmx512m'
+    external_links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - hib_cache
+
+volumes:
+  vol_postgres:
+
+networks:
+  hib_cache:
+    driver: bridge

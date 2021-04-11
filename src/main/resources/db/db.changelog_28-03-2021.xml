@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="1" author="svisockis">
+        <createSequence cycle="true" incrementBy="1" sequenceName="master_seq" startValue="1"/>
+        <createTable tableName="PolicySummary">
+            <column name="id" type="NUMERIC(19,0)" defaultValueSequenceNext="master_seq">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="policyNumber" type="java.sql.Types.VARCHAR(15)"/>
+            <column name="customerNumber" type="java.sql.Types.VARCHAR(15)"/>
+            <column name="productCd" type="java.sql.Types.VARCHAR(5)"/>
+            <column name="LOB" type="java.sql.Types.VARCHAR(15)"/>
+            <column name="rateEffectiveDate" type="java.sql.Types.DATE"/>
+            <column name="riskStateCd" type="java.sql.Types.VARCHAR(10)"/>
+            <column name="quoteEffectiveDate" type="java.sql.Types.DATE"/>
+            <column name="premium_entry_id" type="NUMERIC(19,0)"/>
+        </createTable>
+        <createTable tableName="PremiumEntry">
+            <column name="id" type="NUMERIC(19,0)" defaultValueSequenceNext="master_seq">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="premiumCd" type="java.sql.Types.VARCHAR(15)"/>
+            <column name="monthlyAmt" type="java.sql.Types.DECIMAL(19, 0)"/>
+            <column name="yearlyAmt" type="java.sql.Types.DECIMAL(19, 0)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="PolicySummary" baseColumnNames="premium_entry_id"
+                                 constraintName="premium_entry_id_fk"
+                                 referencedTableName="PremiumEntry"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
