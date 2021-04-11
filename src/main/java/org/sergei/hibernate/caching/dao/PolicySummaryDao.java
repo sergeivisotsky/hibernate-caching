@@ -16,7 +16,7 @@ public class PolicySummaryDao extends GenericJPADAO<PolicySummary, Long> {
 
     private static final String QUERY_FIND_BY_MONTH_AMT_IN_RANGE = "SELECT p FROM PolicySummary p " +
             "LEFT JOIN FETCH p.premiumEntry as pe " +
-            "WHERE pe.monthlyAmount IN (:from, :to)";
+            "WHERE pe.monthlyAmount BETWEEN :from AND :to";
 
     public PolicySummaryDao() {
         super(PolicySummary.class);
